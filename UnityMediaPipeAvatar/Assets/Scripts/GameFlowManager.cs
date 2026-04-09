@@ -7,14 +7,22 @@ public class GameFlowManager : MonoBehaviour
     [Header("Required References")]
     public PipeServer pipeServer;
     public GameObject monkey;
-    public TextMeshProUGUI messageText;
     public TextMeshProUGUI timerText;
+
+    [Header("Screens — assign images here")]
+    public GameObject defaultScreen;    // idle screen
+    public GameObject waveScreen;       // wave to begin (cyberpunk bg)
+    public GameObject danceScreen;      // dance image
+    public GameObject jumpScreen;       // jump image
+    public GameObject poseScreen;       // pose image
+    public GameObject thankYouScreen;   // thank you image
 
     [Header("Raise Hands Detection")]
     public float raiseHandsThreshold = 0.5f;
     public float raiseHandsHoldTime = 1.0f;
 
     [Header("Timings (seconds)")]
+    public float defaultScreenTime = 5f;
     public float danceTime = 10f;
     public float jumpTime = 10f;
     public float signaturePoseCountdown = 3f;
@@ -23,54 +31,77 @@ public class GameFlowManager : MonoBehaviour
     [Header("Monkey Appear Animation")]
     public float appearDuration = 1.5f;
 
-    private enum FlowState { WaitingForHandsRaise, Running }
-    private FlowState _state = FlowState.WaitingForHandsRaise;
+    private enum FlowState { Idle, WaitingForHandsRaise, Running }
+    private FlowState _state = FlowState.Idle;
     private float _handsRaisedTimer = 0f;
     private bool _flowStarted = false;
-
-    // Store monkey's renderer to show/hide visually without moving it
     private Renderer[] _monkeyRenderers;
-    private Avatar _avatarScript;
 
     private void Start()
     {
-        // Get all renderers on monkey (to fade in/out visually)
         _monkeyRenderers = monkey.GetComponentsInChildren<Renderer>();
-        _avatarScript = monkey.GetComponent<Avatar>();
-
-        // Hide monkey visually but keep it active so Avatar script works
         SetMonkeyVisible(false);
-
-        ShowMessage("Raise both hands to begin!");
         SetTimer("");
+        ShowScreen(defaultScreen);
+        StartCoroutine(IntroSequence());
+    }
+
+    // ─── Screen Helper ────────────────────────────────────────
+
+    private void ShowScreen(GameObject screen)
+    {
+        defaultScreen?.SetActive(false);
+        waveScreen?.SetActive(false);
+        danceScreen?.SetActive(false);
+        jumpScreen?.SetActive(false);
+        poseScreen?.SetActive(false);
+        thankYouScreen?.SetActive(false);
+
+        if (screen != null) screen.SetActive(true);
+    }
+
+    // ─── Flow ─────────────────────────────────────────────────
+
+    private IEnumerator IntroSequence()
+    {
+        ShowScreen(defaultScreen);
+        yield return new WaitForSeconds(defaultScreenTime);
+        ShowScreen(waveScreen);
+        _state = FlowState.WaitingForHandsRaise;
     }
 
     private void Update()
     {
         if (_state == FlowState.WaitingForHandsRaise)
             CheckHandsRaised();
+
+        // TEMP: Space to test
+        if (Input.GetKeyDown(KeyCode.Space) && !_flowStarted)
+        {
+            _flowStarted = true;
+            _state = FlowState.Running;
+            ShowScreen(waveScreen);
+            StartCoroutine(RunFlow());
+        }
     }
 
     private void CheckHandsRaised()
     {
         if (pipeServer == null) return;
 
-        Transform leftWrist = pipeServer.GetLandmark(Landmark.LEFT_WRIST);
-        Transform rightWrist = pipeServer.GetLandmark(Landmark.RIGHT_WRIST);
+        Transform leftWrist    = pipeServer.GetLandmark(Landmark.LEFT_WRIST);
+        Transform rightWrist   = pipeServer.GetLandmark(Landmark.RIGHT_WRIST);
         Transform leftShoulder = pipeServer.GetLandmark(Landmark.LEFT_SHOULDER);
-        Transform rightShoulder = pipeServer.GetLandmark(Landmark.RIGHT_SHOULDER);
+        Transform rightShoulder= pipeServer.GetLandmark(Landmark.RIGHT_SHOULDER);
 
         if (leftWrist == null || rightWrist == null) return;
 
-        bool leftRaised = leftWrist.position.y > leftShoulder.position.y + raiseHandsThreshold;
+        bool leftRaised  = leftWrist.position.y  > leftShoulder.position.y  + raiseHandsThreshold;
         bool rightRaised = rightWrist.position.y > rightShoulder.position.y + raiseHandsThreshold;
 
         if (leftRaised && rightRaised)
         {
             _handsRaisedTimer += Time.deltaTime;
-            int dots = Mathf.Clamp((int)(_handsRaisedTimer / raiseHandsHoldTime * 3) + 1, 1, 3);
-            ShowMessage("Hold it" + new string('.', dots));
-
             if (_handsRaisedTimer >= raiseHandsHoldTime && !_flowStarted)
             {
                 _flowStarted = true;
@@ -81,27 +112,23 @@ public class GameFlowManager : MonoBehaviour
         else
         {
             _handsRaisedTimer = 0f;
-            ShowMessage("Raise both hands to begin!");
         }
     }
 
     private IEnumerator RunFlow()
     {
-        // Step 1 — Monkey fades/slides in
-        ShowMessage("Welcome!");
-        SetTimer("");
+        // Monkey appears on wave screen
         yield return StartCoroutine(ShowMonkey());
-
         yield return new WaitForSeconds(0.5f);
 
-        // Step 2 — Dance
-        yield return RunTimedPhase("Teach me how to dance!", danceTime);
+        // Dance
+        yield return RunTimedPhase(danceScreen, danceTime);
 
-        // Step 3 — Jump
-        yield return RunTimedPhase("Teach me how to jump!", jumpTime);
+        // Jump
+        yield return RunTimedPhase(jumpScreen, jumpTime);
 
-        // Step 4 — Signature pose
-        ShowMessage("Do your signature pose!");
+        // Pose countdown
+        ShowScreen(poseScreen);
         SetTimer("");
         yield return new WaitForSeconds(1.5f);
 
@@ -114,64 +141,18 @@ public class GameFlowManager : MonoBehaviour
         SetTimer("");
         TakeScreenshot();
         yield return new WaitForSeconds(0.3f);
-        ShowMessage("Pose captured! Great job!");
-        SetTimer("");
-        yield return new WaitForSeconds(2.5f);
 
-        // Step 5 — Thank you
-        ShowMessage("Thank you! See you next time!");
-        SetTimer("");
+        // Thank you
+        ShowScreen(thankYouScreen);
         yield return StartCoroutine(HideMonkey());
         yield return new WaitForSeconds(thankYouTime);
 
         Restart();
     }
 
-    private IEnumerator ShowMonkey()
+    private IEnumerator RunTimedPhase(GameObject screen, float duration)
     {
-        // Monkey is already tracking — just reveal it visually
-        SetMonkeyVisible(true);
-
-        // Optional: scale up from 0 for a pop-in effect
-        monkey.transform.localScale = Vector3.zero;
-        float elapsed = 0f;
-        Vector3 targetScale = new Vector3(4f, 4f, 4f); // match your monkey scale
-
-        while (elapsed < appearDuration)
-        {
-            elapsed += Time.deltaTime;
-            float t = Mathf.SmoothStep(0f, 1f, elapsed / appearDuration);
-            monkey.transform.localScale = Vector3.Lerp(Vector3.zero, targetScale, t);
-            yield return null;
-        }
-        monkey.transform.localScale = targetScale;
-    }
-    
-    private IEnumerator HideMonkey()
-    {
-        Vector3 startScale = monkey.transform.localScale;
-        float elapsed = 0f;
-
-        while (elapsed < appearDuration)
-        {
-            elapsed += Time.deltaTime;
-            float t = Mathf.SmoothStep(0f, 1f, elapsed / appearDuration);
-            monkey.transform.localScale = Vector3.Lerp(startScale, Vector3.zero, t);
-            yield return null;
-        }
-        SetMonkeyVisible(false);
-        monkey.transform.localScale = new Vector3(4f, 4f, 4f);
-    }
-
-    private void SetMonkeyVisible(bool visible)
-    {
-        foreach (var r in _monkeyRenderers)
-            r.enabled = visible;
-    }
-
-    private IEnumerator RunTimedPhase(string message, float duration)
-    {
-        ShowMessage(message);
+        ShowScreen(screen);
         float remaining = duration;
         while (remaining > 0f)
         {
@@ -182,27 +163,77 @@ public class GameFlowManager : MonoBehaviour
         SetTimer("");
     }
 
+    // ─── Monkey ───────────────────────────────────────────────
+
+    private IEnumerator ShowMonkey()
+    {
+        SetMonkeyVisible(true);
+        monkey.transform.localScale = Vector3.zero;
+
+        GlitchEffect glitch = monkey.GetComponent<GlitchEffect>();
+        if (glitch != null) StartCoroutine(glitch.PlayGlitch());
+
+        yield return new WaitForSeconds(0.3f);
+
+        float elapsed = 0f;
+        Vector3 targetScale = new Vector3(2f, 2f, 2f);
+        while (elapsed < appearDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.SmoothStep(0f, 1f, elapsed / appearDuration);
+            monkey.transform.localScale = Vector3.Lerp(Vector3.zero, targetScale, t);
+            yield return null;
+        }
+        monkey.transform.localScale = targetScale;
+    }
+
+    private IEnumerator HideMonkey()
+    {
+        Vector3 startScale = monkey.transform.localScale;
+        float elapsed = 0f;
+        while (elapsed < appearDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.SmoothStep(0f, 1f, elapsed / appearDuration);
+            monkey.transform.localScale = Vector3.Lerp(startScale, Vector3.zero, t);
+            yield return null;
+        }
+        SetMonkeyVisible(false);
+        monkey.transform.localScale = new Vector3(2f, 2f, 2f);
+    }
+
+    private void SetMonkeyVisible(bool visible)
+    {
+        foreach (var r in _monkeyRenderers) r.enabled = visible;
+    }
+
+    // ─── Screenshot ───────────────────────────────────────────
+
     private void TakeScreenshot()
     {
-        string folder = System.IO.Path.Combine(Application.persistentDataPath, "Screenshots");
+        string folder = System.IO.Path.Combine(
+            Application.persistentDataPath.Trim(), "Screenshots");
         System.IO.Directory.CreateDirectory(folder);
         string filename = "Pose_" + System.DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".png";
-        string fullPath = System.IO.Path.Combine(folder, filename);
+        string fullPath = System.IO.Path.Combine(folder, filename)
+                              .Replace("/", "\\");
         ScreenCapture.CaptureScreenshot(fullPath);
         Debug.Log("Screenshot saved: " + fullPath);
     }
+
+    // ─── Restart ──────────────────────────────────────────────
 
     private void Restart()
     {
         _flowStarted = false;
         _handsRaisedTimer = 0f;
-        _state = FlowState.WaitingForHandsRaise;
+        _state = FlowState.Idle;
         SetMonkeyVisible(false);
-        monkey.transform.localScale = new Vector3(4f, 4f, 4f);
-        ShowMessage("Raise both hands to begin!");
+        monkey.transform.localScale = new Vector3(2f, 2f, 2f);
         SetTimer("");
+        ShowScreen(defaultScreen);
+        StartCoroutine(IntroSequence());
     }
 
-    private void ShowMessage(string msg) { if (messageText != null) messageText.text = msg; }
     private void SetTimer(string t) { if (timerText != null) timerText.text = t; }
 }

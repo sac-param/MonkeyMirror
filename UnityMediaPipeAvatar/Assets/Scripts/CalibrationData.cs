@@ -16,8 +16,19 @@ public class CalibrationData
 
     public void Tick(Quaternion newTarget, float speed)
     {
+        // Proper zero quaternion guard
+        if (newTarget.x == 0 && newTarget.y == 0 && newTarget.z == 0 && newTarget.w == 0)
+            newTarget = Quaternion.identity;
+        if (targetRotation.x == 0 && targetRotation.y == 0 && targetRotation.z == 0 && targetRotation.w == 0)
+            targetRotation = Quaternion.identity;
+
+        // Normalize to prevent invalid quaternions
+        newTarget = Quaternion.Normalize(newTarget);
+        targetRotation = Quaternion.Normalize(targetRotation);
+
         parent.rotation = newTarget;
-        parent.rotation = Quaternion.Lerp(parent.rotation, targetRotation, Time.deltaTime * speed);
+        parent.rotation = Quaternion.Lerp(parent.rotation, targetRotation,
+                            Mathf.Clamp01(Time.deltaTime * speed));
     }
 
     public Vector3 CurrentDirection => (tchild.position - tparent.position).normalized;

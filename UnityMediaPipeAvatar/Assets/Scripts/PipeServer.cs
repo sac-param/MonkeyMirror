@@ -1,4 +1,5 @@
 // REVIEWS
+using System;
 using System.Collections;
 using System.IO;
 using System.IO.Pipes;
@@ -143,8 +144,7 @@ public class PipeServer : MonoBehaviour
                 string[] lines = str.Split('\n');
                 foreach (string l in lines)
                 {
-                    if (string.IsNullOrWhiteSpace(l))
-                        continue;
+                    if (string.IsNullOrWhiteSpace(l)) continue;
                     string[] s = l.Split('|');
                     if (s.Length < 4) continue;
                     int i;
@@ -157,6 +157,16 @@ public class PipeServer : MonoBehaviour
             catch (EndOfStreamException)
             {
                 print("Client Disconnected");
+                break;
+            }
+            catch (ObjectDisposedException)
+            {
+                // Pipe closed when Unity stopped — ignore cleanly
+                break;
+            }
+            catch (IOException)
+            {
+                // Pipe broken — ignore cleanly
                 break;
             }
         }

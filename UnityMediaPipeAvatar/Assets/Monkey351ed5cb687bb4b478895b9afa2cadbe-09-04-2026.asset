@@ -1,0 +1,138 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f1260b785da3e24ebe737764cc33de0, type: 3}
+  m_Name: Monkey351ed5cb687bb4b478895b9afa2cadbe-09-04-2026
+  m_EditorClassIdentifier: 
+  note: 
+  parentCalibrationData:
+  - bone: 14
+    data:
+      parentn: Monkey/Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/
+      childn: Monkey/Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/
+      tparentn: PipeServer/Body Parent/RIGHT_SHOULDER/
+      tchildn: PipeServer/Body Parent/RIGHT_ELBOW/
+      initialDir: {x: -0.98197573, y: -0.18426919, z: -0.042052608}
+      initialRotation: {x: 0.5409755, y: -0.3730424, z: 0.52491045, w: 0.5409753}
+      targetRotation: {x: 0, y: 0, z: 0, w: 0}
+  - bone: 16
+    data:
+      parentn: Monkey/Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/
+      childn: Monkey/Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/
+      tparentn: PipeServer/Body Parent/RIGHT_ELBOW/
+      tchildn: PipeServer/Body Parent/RIGHT_WRIST/
+      initialDir: {x: -0.88305587, y: -0.24592789, z: -0.39966455}
+      initialRotation: {x: 0.45636556, y: -0.5751784, z: 0.5026244, w: 0.45636556}
+      targetRotation: {x: 0, y: 0, z: 0, w: 0}
+  - bone: 2
+    data:
+      parentn: Monkey/Armature/Hips/RightUpLeg/
+      childn: Monkey/Armature/Hips/RightUpLeg/RightLeg/
+      tparentn: PipeServer/Body Parent/RIGHT_HIP/
+      tchildn: PipeServer/Body Parent/RIGHT_KNEE/
+      initialDir: {x: 0.08050213, y: -0.95780075, z: 0.27592987}
+      initialRotation: {x: -0.1197892, y: 0.10984373, z: -0.97940576, w: -0.11978914}
+      targetRotation: {x: 0, y: 0, z: 0, w: 0}
+  - bone: 4
+    data:
+      parentn: Monkey/Armature/Hips/RightUpLeg/RightLeg/
+      childn: Monkey/Armature/Hips/RightUpLeg/RightLeg/RightFoot/
+      tparentn: PipeServer/Body Parent/RIGHT_KNEE/
+      tchildn: PipeServer/Body Parent/RIGHT_ANKLE/
+      initialDir: {x: -0.049919616, y: -0.7060132, z: 0.7064371}
+      initialRotation: {x: 0.089124106, y: -0.12047133, z: -0.98468304, w: 0.089124076}
+      targetRotation: {x: 0, y: 0, z: 0, w: 0}
+  - bone: 13
+    data:
+      parentn: Monkey/Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/
+      childn: Monkey/Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/
+      tparentn: PipeServer/Body Parent/LEFT_SHOULDER/
+      tchildn: PipeServer/Body Parent/LEFT_ELBOW/
+      initialDir: {x: 0.9810448, y: -0.008687578, z: -0.19358578}
+      initialRotation: {x: 0.5416061, y: 0.38694885, z: -0.51341796, w: 0.5416048}
+      targetRotation: {x: 0, y: 0, z: 0, w: 0}
+  - bone: 15
+    data:
+      parentn: Monkey/Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/
+      childn: Monkey/Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/
+      tparentn: PipeServer/Body Parent/LEFT_ELBOW/
+      tchildn: PipeServer/Body Parent/LEFT_WRIST/
+      initialDir: {x: 0.88255376, y: -0.14867258, z: -0.44608894}
+      initialRotation: {x: 0.44982222, y: 0.5669223, z: -0.5233742, w: 0.4498208}
+      targetRotation: {x: 0, y: 0, z: 0, w: 0}
+  - bone: 1
+    data:
+      parentn: Monkey/Armature/Hips/LeftUpLeg/
+      childn: Monkey/Armature/Hips/LeftUpLeg/LeftLeg/
+      tparentn: PipeServer/Body Parent/LEFT_HIP/
+      tchildn: PipeServer/Body Parent/LEFT_KNEE/
+      initialDir: {x: -0.0062513715, y: -0.92394316, z: 0.38247865}
+      initialRotation: {x: 0.11987062, y: 0.10401508, z: -0.98002195, w: 0.11987068}
+      targetRotation: {x: 0, y: 0, z: 0, w: 0}
+  - bone: 3
+    data:
+      parentn: Monkey/Armature/Hips/LeftUpLeg/LeftLeg/
+      childn: Monkey/Armature/Hips/LeftUpLeg/LeftLeg/LeftFoot/
+      tparentn: PipeServer/Body Parent/LEFT_KNEE/
+      tchildn: PipeServer/Body Parent/LEFT_ANKLE/
+      initialDir: {x: -0.0074857613, y: -0.74090207, z: 0.6715714}
+      initialRotation: {x: -0.089376, y: -0.12259105, z: -0.9843756, w: -0.08937612}
+      targetRotation: {x: 0, y: 0, z: 0, w: 0}
+  - bone: 5
+    data:
+      parentn: Monkey/Armature/Hips/LeftUpLeg/LeftLeg/LeftFoot/
+      childn: Monkey/Armature/Hips/LeftUpLeg/LeftLeg/LeftFoot/LeftToeBase/
+      tparentn: PipeServer/Body Parent/LEFT_ANKLE/
+      tchildn: PipeServer/Body Parent/LEFT_FOOT_INDEX/
+      initialDir: {x: 0.17891511, y: -0.8386385, z: -0.51446563}
+      initialRotation: {x: 0.18453494, y: 0.49928993, z: -0.82619816, w: 0.1845353}
+      targetRotation: {x: 0, y: 0, z: 0, w: 0}
+  - bone: 6
+    data:
+      parentn: Monkey/Armature/Hips/RightUpLeg/RightLeg/RightFoot/
+      childn: Monkey/Armature/Hips/RightUpLeg/RightLeg/RightFoot/RightToeBase/
+      tparentn: PipeServer/Body Parent/RIGHT_ANKLE/
+      tchildn: PipeServer/Body Parent/RIGHT_FOOT_INDEX/
+      initialDir: {x: -0.3870761, y: -0.7637716, z: -0.5165511}
+      initialRotation: {x: -0.15970096, y: 0.5028404, z: -0.8343518, w: -0.15970102}
+      targetRotation: {x: 0, y: 0, z: 0, w: 0}
+  spineUpDown:
+    parentn: Monkey/Armature/Hips/Spine02/
+    childn: Monkey/Armature/Hips/Spine02/Spine01/Spine/neck/
+    tparentn: VirtualHip/
+    tchildn: VirtualNeck/
+    initialDir: {x: 0.034688205, y: 0.9370402, z: -0.34749442}
+    initialRotation: {x: 0.0017866294, y: 0.9990578, z: -0.04332751, w: 0.0017866255}
+    targetRotation: {x: 0, y: 0, z: 0, w: 1}
+  hipsTwist:
+    parentn: Monkey/Armature/Hips/
+    childn: Monkey/Armature/Hips/
+    tparentn: PipeServer/Body Parent/RIGHT_HIP/
+    tchildn: PipeServer/Body Parent/LEFT_HIP/
+    initialDir: {x: 0.9847261, y: -0.030912219, z: -0.17134492}
+    initialRotation: {x: -0.0065670363, y: 0.9305508, z: -0.36604524, w: -0.006567029}
+    targetRotation: {x: 0, y: 0, z: 0, w: 1}
+  chest:
+    parentn: Monkey/Armature/Hips/Spine02/Spine01/
+    childn: Monkey/Armature/Hips/Spine02/Spine01/
+    tparentn: PipeServer/Body Parent/RIGHT_HIP/
+    tchildn: PipeServer/Body Parent/LEFT_HIP/
+    initialDir: {x: 0.9847261, y: -0.030912219, z: -0.17134492}
+    initialRotation: {x: 0.0017866282, y: 0.99905777, z: -0.0433273, w: 0.0017866228}
+    targetRotation: {x: 0, y: 0, z: 0, w: 1}
+  head:
+    parentn: Monkey/Armature/Hips/Spine02/Spine01/Spine/neck/
+    childn: Monkey/Armature/Hips/Spine02/Spine01/Spine/neck/Head/
+    tparentn: VirtualNeck/
+    tchildn: PipeServer/Body Parent/NOSE/
+    initialDir: {x: -0.12524377, y: 0.56875765, z: -0.8129137}
+    initialRotation: {x: 0.0041686753, y: 0.9990431, z: -0.04334092, w: 0.0041686688}
+    targetRotation: {x: 0, y: 0, z: 0, w: 1}

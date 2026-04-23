@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: 507ec0d191140974e8d36b3a6b1fca5a
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - P22 Cusp Round
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: e818413af4133e74aa170fc0f519f0ba, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

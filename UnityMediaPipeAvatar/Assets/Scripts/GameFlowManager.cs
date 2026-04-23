@@ -37,6 +37,22 @@ public class GameFlowManager : MonoBehaviour
     private bool _flowStarted = false;
     private Renderer[] _monkeyRenderers;
 
+    [Header("Transition")]
+    public GameObject getReadyScreen;   // "Get Ready for Next!" image
+    public float transitionTime = 3f;
+
+    private IEnumerator TransitionToNextPhase()
+    {
+        // Hide monkey
+        yield return StartCoroutine(HideMonkey());
+
+        // Show get ready screen for 3 seconds
+        ShowScreen(getReadyScreen);
+        yield return new WaitForSeconds(transitionTime);
+
+        // Monkey glitch appears again
+        yield return StartCoroutine(ShowMonkey());
+    }
     private void Start()
     {
         _monkeyRenderers = monkey.GetComponentsInChildren<Renderer>();
@@ -56,6 +72,7 @@ public class GameFlowManager : MonoBehaviour
         jumpScreen?.SetActive(false);
         poseScreen?.SetActive(false);
         thankYouScreen?.SetActive(false);
+        getReadyScreen?.SetActive(false);
 
         if (screen != null) screen.SetActive(true);
     }
@@ -117,17 +134,18 @@ public class GameFlowManager : MonoBehaviour
 
     private IEnumerator RunFlow()
     {
-        // Monkey appears on wave screen
         yield return StartCoroutine(ShowMonkey());
         yield return new WaitForSeconds(0.5f);
 
         // Dance
         yield return RunTimedPhase(danceScreen, danceTime);
 
-        // Jump
+        // Transition → Jump
+        yield return StartCoroutine(TransitionToNextPhase());
         yield return RunTimedPhase(jumpScreen, jumpTime);
 
-        // Pose countdown
+        // Transition → Pose
+        yield return StartCoroutine(TransitionToNextPhase());
         ShowScreen(poseScreen);
         SetTimer("");
         yield return new WaitForSeconds(1.5f);
@@ -142,7 +160,6 @@ public class GameFlowManager : MonoBehaviour
         TakeScreenshot();
         yield return new WaitForSeconds(0.3f);
 
-        // Thank you
         ShowScreen(thankYouScreen);
         yield return StartCoroutine(HideMonkey());
         yield return new WaitForSeconds(thankYouTime);

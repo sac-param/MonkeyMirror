@@ -82,9 +82,11 @@ class BodyThread(threading.Thread):
                 # Rendering results
                 if global_vars.DEBUG:
                     if time.time()-self.timeSincePostStatistics>=1:
-                        print("Theoretical Maximum FPS: %f"%(1/(tf-ti)))
+                        # Fix: avoid division by zero
+                        if tf - ti > 0:
+                            print("Theoretical Maximum FPS: %f"%(1/(tf-ti)))
                         self.timeSincePostStatistics = time.time()
-                        
+                                        
                     if results.pose_landmarks:
                         mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS, 
                                                 mp_drawing.DrawingSpec(color=(255, 100, 0), thickness=2, circle_radius=4),

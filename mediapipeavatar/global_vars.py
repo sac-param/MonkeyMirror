@@ -5,7 +5,7 @@ KILL_THREADS = False
 DEBUG = True 
 
 # Change UDP connection settings (must match Unity side)
-USE_LEGACY_PIPES = True # Only supported on Windows (if True, use NamedPipes rather than UDP sockets)
+USE_LEGACY_PIPES = False # Only supported on Windows (if True, use NamedPipes rather than UDP sockets)
 HOST = '127.0.0.1'
 PORT = 52733
 

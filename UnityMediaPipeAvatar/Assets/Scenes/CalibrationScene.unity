@@ -140,7 +140,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &9776816
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1168,7 +1168,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 171e2c4cd44bd2043bb52d05632ffa51, type: 3}
+  m_Sprite: {fileID: 21300000, guid: a0f8ed88de6ff0c48bad5d0579218230, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1222,7 +1222,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -849.7}
+  m_AnchoredPosition: {x: 0, y: -900}
   m_SizeDelta: {x: 877.7565, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &135313424
@@ -1263,8 +1263,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'zizian log: zizian sleeping in zizian land. human wave needs to be detected
-    to awaken zizian.'
+  m_text: 'ZINION  log: ZINION  sleeping in ZINION  land. human wave needs to be
+    detected to awaken ZINION.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 531df3d117462d24c85251a154c7c967, type: 2}
   m_sharedMaterial: {fileID: -833266143976237240, guid: 531df3d117462d24c85251a154c7c967, type: 2}
@@ -1375,10 +1375,10 @@ RectTransform:
   m_Father: {fileID: 9776816}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1110, y: -900}
-  m_SizeDelta: {x: 0, y: 1800}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -45, y: 0}
+  m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &162126195
 MonoBehaviour:
@@ -1400,8 +1400,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'zizian log: zizian sleeping in zizian land. human wave needs to be detected
-    to awaken zizian.'
+  m_text: 'ZINION  log: ZINION  sleeping in ZINION  land. human wave needs to be
+    detected to awaken ZINION.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 531df3d117462d24c85251a154c7c967, type: 2}
   m_sharedMaterial: {fileID: -833266143976237240, guid: 531df3d117462d24c85251a154c7c967, type: 2}
@@ -2007,7 +2007,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -849.7}
+  m_AnchoredPosition: {x: 0, y: -900}
   m_SizeDelta: {x: 877.7565, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &407335014
@@ -2048,8 +2048,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'zizian log: zizian sleeping in zizian land. human wave needs to be detected
-    to awaken zizian.'
+  m_text: 'ZINION  log: ZINION  sleeping in ZINION  land. human wave needs to be
+    detected to awaken ZINION.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 531df3d117462d24c85251a154c7c967, type: 2}
   m_sharedMaterial: {fileID: -833266143976237240, guid: 531df3d117462d24c85251a154c7c967, type: 2}
@@ -2543,7 +2543,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 7a6dcb59899e2e1478f6fdd1d57fedaf, type: 3}
+  m_Sprite: {fileID: 21300000, guid: febf95017c059024a89678c75a12fa44, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4217,8 +4217,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'zizian log: zizian sleeping in zizian land. human wave needs to be detected
-    to awaken zizian.'
+  m_text: 'ZINION  log: ZINION  sleeping in ZINION  land. human wave needs to be
+    detected to awaken ZINION.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 531df3d117462d24c85251a154c7c967, type: 2}
   m_sharedMaterial: {fileID: -833266143976237240, guid: 531df3d117462d24c85251a154c7c967, type: 2}
@@ -4653,8 +4653,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'zizian log: zizian sleeping in zizian land. human wave needs to be detected
-    to awaken zizian.'
+  m_text: 'ZINION  log: ZINION  sleeping in ZINION  land. human wave needs to be
+    detected to awaken ZINION.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 531df3d117462d24c85251a154c7c967, type: 2}
   m_sharedMaterial: {fileID: -833266143976237240, guid: 531df3d117462d24c85251a154c7c967, type: 2}
@@ -4893,7 +4893,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -849.7}
+  m_AnchoredPosition: {x: 0, y: -900}
   m_SizeDelta: {x: 877.7565, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1091971266
@@ -4934,8 +4934,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'zizian log: zizian sleeping in zizian land. human wave needs to be detected
-    to awaken zizian.'
+  m_text: 'ZINION  log: ZINION  sleeping in ZINION  land. human wave needs to be
+    detected to awaken ZINION.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 531df3d117462d24c85251a154c7c967, type: 2}
   m_sharedMaterial: {fileID: -833266143976237240, guid: 531df3d117462d24c85251a154c7c967, type: 2}
@@ -6127,7 +6127,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -849.7}
+  m_AnchoredPosition: {x: 0, y: -900}
   m_SizeDelta: {x: 877.7565, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1223771826
@@ -6168,10 +6168,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'zizian log: zizian sleeping in zizian land. human wave needs to be detected
-    to awaken zizian. zizian log: zizian sleeping in zizian land. human wave needs
-    to be detected to awaken zizian. zizian log: zizian sleeping in zizian land.
-    human wave needs to be detected to awaken zizian. '
+  m_text: 'ZINION  log: ZINION  sleeping in ZINION  land. human wave needs to be
+    detected to awaken ZINION.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 531df3d117462d24c85251a154c7c967, type: 2}
   m_sharedMaterial: {fileID: -833266143976237240, guid: 531df3d117462d24c85251a154c7c967, type: 2}
@@ -6324,7 +6322,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1346110312
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6342,7 +6340,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -896}
+  m_AnchoredPosition: {x: 0, y: -1126.7}
   m_SizeDelta: {x: 600, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1346110313
@@ -6623,14 +6621,14 @@ MonoBehaviour:
   jumpScreen: {fileID: 504476897}
   poseScreen: {fileID: 1900053307}
   thankYouScreen: {fileID: 1580378519}
-  socketPort: 5005
-  waveMovementThreshold: 0.08
-  waveCycleTime: 1.5
-  waveCyclesRequired: 2
+  defaultScreenTime: 5
   danceTime: 10
   jumpTime: 10
   signaturePoseCountdown: 3
   thankYouTime: 5
+  waveMovementThreshold: 0.08
+  waveCycleTime: 1.5
+  waveCyclesRequired: 2
   appearDuration: 1.5
   getReadyScreen: {fileID: 104376858}
   transitionTime: 3
@@ -6737,6 +6735,58 @@ Transform:
   - {fileID: 505300994}
   m_Father: {fileID: 991397406}
   m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1487548242
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1487548244}
+  - component: {fileID: 1487548243}
+  m_Layer: 0
+  m_Name: ScreenTester
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &1487548243
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1487548242}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0da546a69670ce34cb9d5ed745feff9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defaultScreen: {fileID: 9776815}
+  waveScreen: {fileID: 1933870404}
+  danceScreen: {fileID: 1579948445}
+  jumpScreen: {fileID: 504476897}
+  poseScreen: {fileID: 1900053307}
+  thankYouScreen: {fileID: 1580378519}
+  getReadyScreen: {fileID: 104376858}
+  secondsPerScreen: 5
+--- !u!4 &1487548244
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1487548242}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1536969478
 GameObject:
@@ -6946,7 +6996,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: b74ca6c6aa0e7ad4aa1da1e29243c44b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 4acbcc0ff454384439c2ffe6b9a487ed, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -7023,7 +7073,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: b5eaa9eb38b5da64a966f4c128d96366, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 7ce2bc3cfde3adf49baa1305cd5c4a95, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -7077,7 +7127,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -849.7}
+  m_AnchoredPosition: {x: 0, y: -900}
   m_SizeDelta: {x: 877.7565, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1580433532
@@ -7118,8 +7168,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'zizian log: zizian sleeping in zizian land. human wave needs to be detected
-    to awaken zizian.'
+  m_text: 'ZINION  log: ZINION  sleeping in ZINION  land. human wave needs to be
+    detected to awaken ZINION.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 531df3d117462d24c85251a154c7c967, type: 2}
   m_sharedMaterial: {fileID: -833266143976237240, guid: 531df3d117462d24c85251a154c7c967, type: 2}
@@ -8613,7 +8663,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 08b903de201b8e34a8ec2e41ecccf706, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 07e33fecbace46641b1deb66e4fc603f, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -8723,7 +8773,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: a39e6e8814e8ec242b8ddb31e52bb728, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 9bb00414410e1184ba97dd21c5b664ef, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -8800,8 +8850,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'zizian log: zizian sleeping in zizian land. human wave needs to be detected
-    to awaken zizian.'
+  m_text: 'ZINION  log: ZINION  sleeping in ZINION  land. human wave needs to be
+    detected to awaken ZINION.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 531df3d117462d24c85251a154c7c967, type: 2}
   m_sharedMaterial: {fileID: -833266143976237240, guid: 531df3d117462d24c85251a154c7c967, type: 2}
@@ -8932,7 +8982,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -849.7}
+  m_AnchoredPosition: {x: 0, y: -900}
   m_SizeDelta: {x: 877.7565, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1984796599
@@ -8973,8 +9023,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'zizian log: zizian sleeping in zizian land. human wave needs to be detected
-    to awaken zizian.'
+  m_text: 'ZINION  log: ZINION  sleeping in ZINION  land. human wave needs to be
+    detected to awaken ZINION.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 531df3d117462d24c85251a154c7c967, type: 2}
   m_sharedMaterial: {fileID: -833266143976237240, guid: 531df3d117462d24c85251a154c7c967, type: 2}

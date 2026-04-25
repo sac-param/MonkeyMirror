@@ -19,13 +19,13 @@ class CaptureThread(threading.Thread):
     counter = 0
     timer = 0.0
     def run(self):
-        self.cap = cv2.VideoCapture(global_vars.CAM_INDEX) # sometimes it can take a while for certain video captures
+        self.cap = cv2.VideoCapture(global_vars.CAM_INDEX, cv2.CAP_DSHOW)  # CAP_DSHOW faster on Windows # sometimes it can take a while for certain video captures
         if global_vars.USE_CUSTOM_CAM_SETTINGS:
             self.cap.set(cv2.CAP_PROP_FPS, global_vars.FPS)
             self.cap.set(cv2.CAP_PROP_FRAME_WIDTH,global_vars.WIDTH)
             self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT,global_vars.HEIGHT)
 
-        time.sleep(1)
+        time.sleep(3)
         
         print("Opened Capture @ %s fps"%str(self.cap.get(cv2.CAP_PROP_FPS)))
         while not global_vars.KILL_THREADS:
@@ -105,7 +105,7 @@ class BodyThread(threading.Thread):
 
                 self.send_data(self.data)
                     
-        self.pipe.close()
+        if self.pipe: self.pipe.close()
         capture.cap.release()
         cv2.destroyAllWindows()
         pass

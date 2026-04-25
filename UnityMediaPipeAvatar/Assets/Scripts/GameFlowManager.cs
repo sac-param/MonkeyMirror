@@ -1,4 +1,11 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+using System.Threading;
+using System.Security.Cryptography;
 using UnityEngine;
 using TMPro;
 
@@ -10,19 +17,22 @@ public class GameFlowManager : MonoBehaviour
     public TextMeshProUGUI timerText;
 
     [Header("Screens — assign images here")]
-    public GameObject defaultScreen;    // idle screen
-    public GameObject waveScreen;       // wave to begin (cyberpunk bg)
-    public GameObject danceScreen;      // dance image
-    public GameObject jumpScreen;       // jump image
-    public GameObject poseScreen;       // pose image
-    public GameObject thankYouScreen;   // thank you image
+    public GameObject defaultScreen;
+    public GameObject waveScreen;
+    public GameObject danceScreen;
+    public GameObject jumpScreen;
+    public GameObject poseScreen;
+    public GameObject thankYouScreen;
 
-    [Header("Raise Hands Detection")]
-    public float raiseHandsThreshold = 0.5f;
-    public float raiseHandsHoldTime = 1.0f;
+    [Header("WebSocket Settings")]
+    public int socketPort = 5005;
+
+    [Header("Wave Detection")]
+    public float waveMovementThreshold = 0.08f;
+    public float waveCycleTime = 1.5f;
+    public int waveCyclesRequired = 2;
 
     [Header("Timings (seconds)")]
-    public float defaultScreenTime = 5f;
     public float danceTime = 10f;
     public float jumpTime = 10f;
     public float signaturePoseCountdown = 3f;
@@ -31,35 +41,280 @@ public class GameFlowManager : MonoBehaviour
     [Header("Monkey Appear Animation")]
     public float appearDuration = 1.5f;
 
-    private enum FlowState { Idle, WaitingForHandsRaise, Running }
+    [Header("Transition")]
+    public GameObject getReadyScreen;
+    public float transitionTime = 3f;
+
+    private enum FlowState { Idle, WaitingForWave, Running }
     private FlowState _state = FlowState.Idle;
-    private float _handsRaisedTimer = 0f;
     private bool _flowStarted = false;
     private Renderer[] _monkeyRenderers;
 
-    [Header("Transition")]
-    public GameObject getReadyScreen;   // "Get Ready for Next!" image
-    public float transitionTime = 3f;
+    // Wave detection state
+    private float _waveTimer = 0f;
+    private int _waveCycleCount = 0;
+    private float _lastWristX = 0f;
+    private bool _movingRight = false;
 
-    private IEnumerator TransitionToNextPhase()
-    {
-        // Hide monkey
-        yield return StartCoroutine(HideMonkey());
+    // Optional: uncomment _handsRaisedTimer to use for testing raise-hands logic
+    // private float _handsRaisedTimer = 0f;
 
-        // Show get ready screen for 3 seconds
-        ShowScreen(getReadyScreen);
-        yield return new WaitForSeconds(transitionTime);
+    // WebSocket
+    private TcpListener _tcpListener;
+    private Thread _socketThread;
+    private volatile bool _startReceived = false;
+    private volatile bool _appRunning = true;
 
-        // Monkey glitch appears again
-        yield return StartCoroutine(ShowMonkey());
-    }
+    // Connected WebSocket clients (to send back screenshot path)
+    private List<NetworkStream> _connectedStreams = new List<NetworkStream>();
+    private readonly object _streamLock = new object();
+
+    // ─── Start ────────────────────────────────────────────────
+
     private void Start()
     {
         _monkeyRenderers = monkey.GetComponentsInChildren<Renderer>();
         SetMonkeyVisible(false);
         SetTimer("");
         ShowScreen(defaultScreen);
-        StartCoroutine(IntroSequence());
+
+        _socketThread = new Thread(ListenForWebSocket);
+        _socketThread.IsBackground = true;
+        _socketThread.Start();
+
+        Debug.Log($"[WebSocket] Server started on port {socketPort}.");
+    }
+
+    // ─── WebSocket Server (background thread) ─────────────────
+
+    private void ListenForWebSocket()
+    {
+        try
+        {
+            _tcpListener = new TcpListener(IPAddress.Any, socketPort);
+            _tcpListener.Start();
+
+            while (_appRunning)
+            {
+                if (!_tcpListener.Pending()) { Thread.Sleep(50); continue; }
+
+                TcpClient client = _tcpListener.AcceptTcpClient();
+                Thread clientThread = new Thread(() => HandleClient(client));
+                clientThread.IsBackground = true;
+                clientThread.Start();
+            }
+        }
+        catch (System.Exception e)
+        {
+            if (_appRunning) Debug.LogError($"[WebSocket] Listener error: {e.Message}");
+        }
+    }
+
+    private void HandleClient(TcpClient client)
+    {
+        NetworkStream stream = null;
+        bool isWebSocket = false;
+
+        try
+        {
+            stream = client.GetStream();
+
+            // ── WebSocket Handshake ──
+            byte[] buffer = new byte[4096];
+            int bytesRead = stream.Read(buffer, 0, buffer.Length);
+            string request = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+
+            if (!request.Contains("Upgrade: websocket"))
+            {
+                // Plain TCP fallback
+                string msg = request.Trim().ToLower();
+                Debug.Log($"[Socket] Plain TCP received: '{msg}'");
+                if (msg == "start") _startReceived = true;
+                client.Close();
+                return;
+            }
+
+            isWebSocket = true;
+
+            // Extract key and build accept
+            string key = "";
+            foreach (string line in request.Split('\n'))
+            {
+                if (line.StartsWith("Sec-WebSocket-Key:"))
+                {
+                    key = line.Replace("Sec-WebSocket-Key:", "").Trim();
+                    break;
+                }
+            }
+
+            string acceptKey = Convert.ToBase64String(
+                SHA1.Create().ComputeHash(
+                    Encoding.UTF8.GetBytes(key + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11")
+                )
+            );
+
+            string response =
+                "HTTP/1.1 101 Switching Protocols\r\n" +
+                "Upgrade: websocket\r\n" +
+                "Connection: Upgrade\r\n" +
+                $"Sec-WebSocket-Accept: {acceptKey}\r\n\r\n";
+
+            byte[] responseBytes = Encoding.UTF8.GetBytes(response);
+            stream.Write(responseBytes, 0, responseBytes.Length);
+
+            Debug.Log("[WebSocket] TouchDesigner connected!");
+
+            // Keep stream so we can send back screenshot path
+            lock (_streamLock) { _connectedStreams.Add(stream); }
+
+            // ── Read Frames ──
+            while (_appRunning && client.Connected)
+            {
+                if (!stream.DataAvailable) { Thread.Sleep(10); continue; }
+
+                byte[] frameBuffer = new byte[256];
+                int read = stream.Read(frameBuffer, 0, frameBuffer.Length);
+                if (read < 2) continue;
+
+                bool masked = (frameBuffer[1] & 0x80) != 0;
+                int payloadLen = frameBuffer[1] & 0x7F;
+                int offset = 2;
+
+                if (payloadLen == 126) offset += 2;
+                else if (payloadLen == 127) offset += 8;
+
+                byte[] maskKey = new byte[4];
+                if (masked)
+                {
+                    System.Array.Copy(frameBuffer, offset, maskKey, 0, 4);
+                    offset += 4;
+                }
+
+                byte[] payload = new byte[payloadLen];
+                for (int i = 0; i < payloadLen; i++)
+                {
+                    payload[i] = masked
+                        ? (byte)(frameBuffer[offset + i] ^ maskKey[i % 4])
+                        : frameBuffer[offset + i];
+                }
+
+                string message = Encoding.UTF8.GetString(payload).Trim().ToLower();
+                Debug.Log($"[WebSocket] Received: '{message}'");
+
+                if (message == "start") _startReceived = true;
+            }
+        }
+        catch (System.Exception e)
+        {
+            if (_appRunning) Debug.Log($"[WebSocket] Client disconnected: {e.Message}");
+        }
+        finally
+        {
+            if (isWebSocket && stream != null)
+                lock (_streamLock) { _connectedStreams.Remove(stream); }
+            client.Close();
+        }
+    }
+
+    // ── Send WebSocket text frame back to TD ──
+    private void SendWebSocketMessage(string message)
+    {
+        byte[] payload = Encoding.UTF8.GetBytes(message);
+        byte[] frame = new byte[2 + payload.Length];
+        frame[0] = 0x81; // FIN + text opcode
+        frame[1] = (byte)payload.Length;
+        System.Array.Copy(payload, 0, frame, 2, payload.Length);
+
+        lock (_streamLock)
+        {
+            List<NetworkStream> toRemove = new List<NetworkStream>();
+            foreach (NetworkStream s in _connectedStreams)
+            {
+                try { s.Write(frame, 0, frame.Length); }
+                catch { toRemove.Add(s); }
+            }
+            foreach (NetworkStream s in toRemove) _connectedStreams.Remove(s);
+        }
+    }
+
+    // ─── Update ───────────────────────────────────────────────
+
+    private void Update()
+    {
+        if (_startReceived && _state == FlowState.Idle)
+        {
+            _startReceived = false;
+            Debug.Log("[WebSocket] 'start' received → moving to wave screen");
+            ShowScreen(waveScreen);
+            _state = FlowState.WaitingForWave;
+        }
+
+        if (_state == FlowState.WaitingForWave)
+            CheckWave();
+
+        // TEMP: S key to simulate 'start' for testing
+        if (Input.GetKeyDown(KeyCode.S) && _state == FlowState.Idle)
+        {
+            ShowScreen(waveScreen);
+            _state = FlowState.WaitingForWave;
+        }
+
+        // TEMP: Space to trigger full flow directly
+        if (Input.GetKeyDown(KeyCode.Space) && !_flowStarted)
+        {
+            _flowStarted = true;
+            _state = FlowState.Running;
+            StartCoroutine(RunFlow());
+        }
+    }
+
+    // ─── Wave Detection ───────────────────────────────────────
+
+    private void CheckWave()
+    {
+        if (pipeServer == null) return;
+
+        Transform leftWrist = pipeServer.GetLandmark(Landmark.LEFT_WRIST);
+        Transform rightWrist = pipeServer.GetLandmark(Landmark.RIGHT_WRIST);
+
+        if (leftWrist == null && rightWrist == null) return;
+
+        Transform wrist = leftWrist ?? rightWrist;
+        float currentX = wrist.position.x;
+
+        _waveTimer += Time.deltaTime;
+        if (_waveTimer > waveCycleTime)
+        {
+            _waveTimer = 0f;
+            _waveCycleCount = 0;
+            _lastWristX = currentX;
+            _movingRight = currentX > _lastWristX;
+            return;
+        }
+
+        float delta = currentX - _lastWristX;
+
+        if (_movingRight && delta < -waveMovementThreshold)
+        {
+            _waveCycleCount++;
+            _movingRight = false;
+            _lastWristX = currentX;
+            _waveTimer = 0f;
+        }
+        else if (!_movingRight && delta > waveMovementThreshold)
+        {
+            _waveCycleCount++;
+            _movingRight = true;
+            _lastWristX = currentX;
+            _waveTimer = 0f;
+        }
+
+        if (_waveCycleCount >= waveCyclesRequired && !_flowStarted)
+        {
+            _flowStarted = true;
+            _state = FlowState.Running;
+            StartCoroutine(RunFlow());
+        }
     }
 
     // ─── Screen Helper ────────────────────────────────────────
@@ -79,72 +334,16 @@ public class GameFlowManager : MonoBehaviour
 
     // ─── Flow ─────────────────────────────────────────────────
 
-    private IEnumerator IntroSequence()
-    {
-        ShowScreen(defaultScreen);
-        yield return new WaitForSeconds(defaultScreenTime);
-        ShowScreen(waveScreen);
-        _state = FlowState.WaitingForHandsRaise;
-    }
-
-    private void Update()
-    {
-        if (_state == FlowState.WaitingForHandsRaise)
-            CheckHandsRaised();
-
-        // TEMP: Space to test
-        if (Input.GetKeyDown(KeyCode.Space) && !_flowStarted)
-        {
-            _flowStarted = true;
-            _state = FlowState.Running;
-            ShowScreen(waveScreen);
-            StartCoroutine(RunFlow());
-        }
-    }
-
-    private void CheckHandsRaised()
-    {
-        if (pipeServer == null) return;
-
-        Transform leftWrist    = pipeServer.GetLandmark(Landmark.LEFT_WRIST);
-        Transform rightWrist   = pipeServer.GetLandmark(Landmark.RIGHT_WRIST);
-        Transform leftShoulder = pipeServer.GetLandmark(Landmark.LEFT_SHOULDER);
-        Transform rightShoulder= pipeServer.GetLandmark(Landmark.RIGHT_SHOULDER);
-
-        if (leftWrist == null || rightWrist == null) return;
-
-        bool leftRaised  = leftWrist.position.y  > leftShoulder.position.y  + raiseHandsThreshold;
-        bool rightRaised = rightWrist.position.y > rightShoulder.position.y + raiseHandsThreshold;
-
-        if (leftRaised && rightRaised)
-        {
-            _handsRaisedTimer += Time.deltaTime;
-            if (_handsRaisedTimer >= raiseHandsHoldTime && !_flowStarted)
-            {
-                _flowStarted = true;
-                _state = FlowState.Running;
-                StartCoroutine(RunFlow());
-            }
-        }
-        else
-        {
-            _handsRaisedTimer = 0f;
-        }
-    }
-
     private IEnumerator RunFlow()
     {
         yield return StartCoroutine(ShowMonkey());
         yield return new WaitForSeconds(0.5f);
 
-        // Dance
         yield return RunTimedPhase(danceScreen, danceTime);
 
-        // Transition → Jump
         yield return StartCoroutine(TransitionToNextPhase());
         yield return RunTimedPhase(jumpScreen, jumpTime);
 
-        // Transition → Pose
         yield return StartCoroutine(TransitionToNextPhase());
         ShowScreen(poseScreen);
         SetTimer("");
@@ -178,6 +377,14 @@ public class GameFlowManager : MonoBehaviour
             yield return null;
         }
         SetTimer("");
+    }
+
+    private IEnumerator TransitionToNextPhase()
+    {
+        yield return StartCoroutine(HideMonkey());
+        ShowScreen(getReadyScreen);
+        yield return new WaitForSeconds(transitionTime);
+        yield return StartCoroutine(ShowMonkey());
     }
 
     // ─── Monkey ───────────────────────────────────────────────
@@ -232,10 +439,13 @@ public class GameFlowManager : MonoBehaviour
             Application.persistentDataPath.Trim(), "Screenshots");
         System.IO.Directory.CreateDirectory(folder);
         string filename = "Pose_" + System.DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".png";
-        string fullPath = System.IO.Path.Combine(folder, filename)
-                              .Replace("/", "\\");
+        string fullPath = System.IO.Path.Combine(folder, filename).Replace("/", "\\");
         ScreenCapture.CaptureScreenshot(fullPath);
         Debug.Log("Screenshot saved: " + fullPath);
+
+        // Send path back to TouchDesigner via same WebSocket connection
+        SendWebSocketMessage(fullPath);
+        Debug.Log($"[WebSocket] Emitted screenshot path to TD: {fullPath}");
     }
 
     // ─── Restart ──────────────────────────────────────────────
@@ -243,13 +453,23 @@ public class GameFlowManager : MonoBehaviour
     private void Restart()
     {
         _flowStarted = false;
-        _handsRaisedTimer = 0f;
+        _waveTimer = 0f;
+        _waveCycleCount = 0;
+        // _handsRaisedTimer = 0f; // uncomment if using hands raise timer
         _state = FlowState.Idle;
         SetMonkeyVisible(false);
         monkey.transform.localScale = new Vector3(2f, 2f, 2f);
         SetTimer("");
         ShowScreen(defaultScreen);
-        StartCoroutine(IntroSequence());
+    }
+
+    // ─── Cleanup ──────────────────────────────────────────────
+
+    private void OnDestroy()
+    {
+        _appRunning = false;
+        _tcpListener?.Stop();
+        _socketThread?.Abort();
     }
 
     private void SetTimer(string t) { if (timerText != null) timerText.text = t; }

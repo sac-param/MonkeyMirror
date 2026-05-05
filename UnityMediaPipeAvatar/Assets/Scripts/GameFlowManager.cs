@@ -24,9 +24,6 @@ public class GameFlowManager : MonoBehaviour
     public GameObject poseScreen;
     public GameObject thankYouScreen;
 
-    // [Header("WebSocket Settings")]
-    // public int socketPort = 5005;
-
     [Header("Timings (seconds)")]
     public float defaultScreenTime = 5f;
     public float danceTime = 10f;
@@ -41,6 +38,7 @@ public class GameFlowManager : MonoBehaviour
 
     [Header("Monkey Appear Animation")]
     public float appearDuration = 1.5f;
+    public float monkeyTargetScale = 8f;  // ← change this value to resize monkey
 
     [Header("Transition")]
     public GameObject getReadyScreen;
@@ -57,9 +55,6 @@ public class GameFlowManager : MonoBehaviour
     private float _lastWristX = 0f;
     private bool _movingRight = false;
 
-    // Optional: uncomment _handsRaisedTimer to use for testing raise-hands logic
-    // private float _handsRaisedTimer = 0f;
-
     // ── WebSocket (commented out — enable when TD is ready) ──
     // private TcpListener _tcpListener;
     // private Thread _socketThread;
@@ -73,16 +68,11 @@ public class GameFlowManager : MonoBehaviour
     private void Start()
     {
         _monkeyRenderers = monkey.GetComponentsInChildren<Renderer>();
+        monkey.transform.localScale = Vector3.zero;
         SetMonkeyVisible(false);
         SetTimer("");
         ShowScreen(defaultScreen);
         StartCoroutine(IntroSequence());
-
-        // ── Uncomment to enable WebSocket ──
-        // _socketThread = new Thread(ListenForWebSocket);
-        // _socketThread.IsBackground = true;
-        // _socketThread.Start();
-        // Debug.Log($"[WebSocket] Server started on port {socketPort}.");
     }
 
     // ─── Intro Sequence ───────────────────────────────────────
@@ -90,7 +80,7 @@ public class GameFlowManager : MonoBehaviour
     private IEnumerator IntroSequence()
     {
         ShowScreen(defaultScreen);
-        yield return new WaitForSeconds(defaultScreenTime); // 5 seconds
+        yield return new WaitForSeconds(defaultScreenTime);
         ShowScreen(waveScreen);
         _state = FlowState.WaitingForWave;
     }
@@ -99,14 +89,6 @@ public class GameFlowManager : MonoBehaviour
 
     private void Update()
     {
-        // ── Uncomment to enable WebSocket trigger ──
-        // if (_startReceived && _state == FlowState.Idle)
-        // {
-        //     _startReceived = false;
-        //     ShowScreen(waveScreen);
-        //     _state = FlowState.WaitingForWave;
-        // }
-
         if (_state == FlowState.WaitingForWave)
             CheckWave();
 
@@ -249,8 +231,8 @@ public class GameFlowManager : MonoBehaviour
 
     private IEnumerator ShowMonkey()
     {
-        SetMonkeyVisible(true);
         monkey.transform.localScale = Vector3.zero;
+        SetMonkeyVisible(true);
 
         GlitchEffect glitch = monkey.GetComponent<GlitchEffect>();
         if (glitch != null) StartCoroutine(glitch.PlayGlitch());
@@ -258,7 +240,7 @@ public class GameFlowManager : MonoBehaviour
         yield return new WaitForSeconds(0.3f);
 
         float elapsed = 0f;
-        Vector3 targetScale = new Vector3(2f, 2f, 2f);
+        Vector3 targetScale = new Vector3(monkeyTargetScale, monkeyTargetScale, monkeyTargetScale);
         while (elapsed < appearDuration)
         {
             elapsed += Time.deltaTime;
@@ -281,7 +263,7 @@ public class GameFlowManager : MonoBehaviour
             yield return null;
         }
         SetMonkeyVisible(false);
-        monkey.transform.localScale = new Vector3(2f, 2f, 2f);
+        monkey.transform.localScale = Vector3.zero;
     }
 
     private void SetMonkeyVisible(bool visible)
@@ -300,17 +282,7 @@ public class GameFlowManager : MonoBehaviour
         string fullPath = System.IO.Path.Combine(folder, filename).Replace("/", "\\");
         ScreenCapture.CaptureScreenshot(fullPath);
         Debug.Log("Screenshot saved: " + fullPath);
-
-        // ── Uncomment to send path back to TD via WebSocket ──
-        // SendWebSocketMessage(fullPath);
-        // Debug.Log($"[WebSocket] Emitted screenshot path to TD: {fullPath}");
     }
-
-    // ── WebSocket methods (commented out — enable when TD is ready) ──
-
-    // private void ListenForWebSocket() { ... }
-    // private void HandleClient(TcpClient client) { ... }
-    // private void SendWebSocketMessage(string message) { ... }
 
     // ─── Restart ──────────────────────────────────────────────
 
@@ -319,23 +291,13 @@ public class GameFlowManager : MonoBehaviour
         _flowStarted = false;
         _waveTimer = 0f;
         _waveCycleCount = 0;
-        // _handsRaisedTimer = 0f;
         _state = FlowState.Idle;
         SetMonkeyVisible(false);
-        monkey.transform.localScale = new Vector3(2f, 2f, 2f);
+        monkey.transform.localScale = Vector3.zero;
         SetTimer("");
         ShowScreen(defaultScreen);
-        StartCoroutine(IntroSequence()); // restart 5s timer
+        StartCoroutine(IntroSequence());
     }
-
-    // ─── Cleanup ──────────────────────────────────────────────
-
-    // private void OnDestroy()
-    // {
-    //     _appRunning = false;
-    //     _tcpListener?.Stop();
-    //     _socketThread?.Abort();
-    // }
 
     private void SetTimer(string t) { if (timerText != null) timerText.text = t; }
 }

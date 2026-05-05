@@ -14,7 +14,7 @@ public class GlitchEffect : MonoBehaviour
     private void Awake()
     {
         _renderers = GetComponentsInChildren<Renderer>();
-        _originalPos = transform.position;
+        // _originalPos = transform.position;
         _propBlock = new MaterialPropertyBlock();
     }
 
@@ -56,8 +56,8 @@ public class GlitchEffect : MonoBehaviour
         }
 
         // Restore monkey to normal
-        transform.position = _originalPos;
-        transform.localScale = new Vector3(2f, 2f, 2f);
+        // transform.position = _originalPos;
+        // transform.localScale = new Vector3(2f, 2f, 2f);
 
         foreach (var r in _renderers)
         {
